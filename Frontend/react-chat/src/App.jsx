@@ -14,9 +14,13 @@ function App() {
   }, []);
 
   const router = createBrowserRouter([
-    { path: "/", element: userLogged ? <Chat /> : <Login /> },
-    { path: "/login", element: <Login /> },
-    { path: "/register", element: <Register /> },
+    {path: "/",
+    children: [
+      { path: "/", element: userLogged ? <Chat /> : <Login /> },
+      { path: "/login", element: <Login /> },
+      { path: "/register", element: <Register /> },
+    ]
+  }
   ]);
 
   return (
