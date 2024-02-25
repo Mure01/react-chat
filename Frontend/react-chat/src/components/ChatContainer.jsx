@@ -1,25 +1,23 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { authContext } from "../App";
 import axios from "axios";
 const apiLink = import.meta.env.VITE_API_LINK;
-import io from 'socket.io-client'
+import io from "socket.io-client";
 
-const socket = io.connect(apiLink)
+const socket = io.connect(apiLink);
 
 const ChatContainer = () => {
   const currentUser = localStorage.getItem("User")
     ? JSON.parse(localStorage.getItem("User"))
     : null;
 
-  const { userReciver, setUserReciver, isUserSelected, setIsUserSelected } = useContext(authContext);
+  const { userReciver, setUserReciver, isUserSelected, setIsUserSelected } =
+    useContext(authContext);
   const [messages, setMessages] = React.useState([]);
   const [message, setMessage] = React.useState("");
 
   const addMessage = async (e) => {
     e.preventDefault();
-    setMessages((prevMess) => [...prevMess, message]);
-    await socket.emit('sendMessage', message)
-    setMessage("");
     await axios
       .post(apiLink + "/addMessage", {
         reciver: userReciver._id,
@@ -27,16 +25,17 @@ const ChatContainer = () => {
         message,
       })
       .then((res) => {
+        socket.emit("sendMessage", message);
         console.log("Message added: "), setMessages(res.data.allMessage);
+        scrollChat();
+        setMessage("");
       })
       .catch((err) => console.log("Error in adding the message : ", err));
   };
-  const getMessage = async () => {
-    await socket.on('getMessage', function (msg) {
-      setMessages(msg)
-      getMessage()
-    });
-  }
+  socket.on("getMessage", function (msg) {
+  setMessages(msg);
+    scrollChat()
+  });
   useEffect(() => {
     const getMessage = async () => {
       await axios
@@ -44,12 +43,20 @@ const ChatContainer = () => {
         .then((res) => {
           console.log("Message returned: ", res.data.allMessage);
           setMessages(res.data.allMessage);
+          scrollChat()
+
         })
         .catch((err) => console.log("Error in adding the message : ", err));
     };
-    getMessage();
+    getMessage()
   }, [userReciver]);
-  
+  const myDivRef = useRef(null);
+
+  function scrollChat() {
+    var chatBox = document.getElementById('chatBox');
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
   return (
     <>
       <div className="w-11/12 m-auto bg-slate-800 relative h-[80%] mt-2 flex flex-col">
@@ -60,7 +67,7 @@ const ChatContainer = () => {
           </p>
         </div>
 
-        <div className="h-[90%] overflow-y-scroll pb-10 text-white px-4">
+        <div ref={myDivRef} id="chatBox" className="h-[90%] overflow-y-scroll pb-20 text-white px-4">
           {messages.length !== 0 ? (
             messages.map((mess) => {
               if (

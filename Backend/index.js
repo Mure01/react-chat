@@ -6,6 +6,7 @@ require('dotenv').config()
 const mongoose = require('mongoose');
 const fs = require('fs')
 const {Server} = require('socket.io')
+
 app.use(require("body-parser").json());
 app.use(cors())
 app.use(express.json())
@@ -41,7 +42,7 @@ const server = app.listen(process.env.PORT, () => {
 });
 const io = new Server(server, {
     cors:{
-      origin:true,
+      origin:process.env.CLIENT_LINK,
       methods:['GET', 'POST']
     }
 })
@@ -50,7 +51,6 @@ io.on('connection', (socket) => {
   console.log("User connected", socket.id)
 
   socket.on('sendMessage', async (mess) => {
-    console.log("dosla je poruka: ",mess)
     const allMessage = await messageModel.find()
     socket.broadcast.emit( 'getMessage', allMessage) //slanja poruke svim klijentima osim onoga koje je poslalo
   })
