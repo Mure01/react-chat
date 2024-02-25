@@ -20,7 +20,13 @@ const filenames = fs.readdirSync('uploads')
 app.use('/uploads', (req, res) => {
   res.send({filenames})
 });
-
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', process.env.CLIENT_LINK);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 mongoose.connect(process.env.urlDb)
   .then(() => {
