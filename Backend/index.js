@@ -5,13 +5,14 @@ const path = require('path')
 require('dotenv').config()
 const mongoose = require('mongoose');
 const fs = require('fs')
-
+const {Server} = require('socket.io')
 app.use(require("body-parser").json());
 app.use(cors())
 app.use(express.json())
 app.use("/image", express.static('uploads'))
 
-var indexRouter = require('./routes/index')
+var indexRouter = require('./routes/index');
+const messageModel = require('./Models/messageModel');
 
 app.use('/', indexRouter);
 
@@ -29,6 +30,27 @@ mongoose.connect(process.env.urlDb)
     console.error('Error connecting to MongoDB:', error.message);
   });
 
-app.listen(process.env.PORT, () => {
+const server = app.listen(process.env.PORT, () => {
     console.log("Slusa na portu 5000")
 });
+
+const io = new Server(server, {
+    cors:{
+      origin:process.env.CLIENT_LINK
+    }
+})
+
+io.on('connection', (socket) => {
+  console.log("User connected", socket.id)
+
+  socket.on('sendMessage', async (mess) => {
+    console.log("dosla je poruka: ",mess)
+    const allMessage = await messageModel.find()
+    socket.broadcast.emit( 'getMessage', allMessage) //slanja poruke svim klijentima osim onoga koje je poslalo
+  })
+
+  socket.on('disconnect', () => {
+    console.log("User disconnected", socket.id)
+  })
+
+})

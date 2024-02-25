@@ -9,7 +9,6 @@ const apiLink = import.meta.env.VITE_API_LINK
 
 const Login = () => {
   const { setUserLogged} = useContext(authContext)
-  console.log(useContext(authContext))
   const toastOption = {
     position: "bottom-right",
     autoClose: 8000,

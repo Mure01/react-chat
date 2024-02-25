@@ -1,6 +1,5 @@
 const userModel = require("../Models/userModel");
-
-
+const messagesModel = require('../Models/messageModel');
 const registerUser = async  (req, res) => {
     const { username, email, password } = req.body;
 
@@ -36,8 +35,23 @@ const loginUser = async  (req, res) => {
 
 const getAllUsers = async (req,res) => {
     const users = await userModel.find();
-    console.log(users)
     res.json(users)
 }
+const addMessage = async (req, res) => {
+    console.log(req.body)
+    const {reciver, sender, message} = req.body
+    const newMessage = new messagesModel({
+        sender: sender,
+        reciver: reciver,
+        message: message
+    })
+    await newMessage.save()
+    const allMessage = await messagesModel.find()
+    res.json({mess: "Message added", allMessage})
+}
+const getMessage = async (req, res) => {
+    const allMessage = await messagesModel.find()
+    res.json({mess: "Message returned", allMessage})
 
-module.exports =  {registerUser, loginUser, getAllUsers}
+}
+module.exports =  {registerUser, loginUser,getMessage, addMessage, getAllUsers}

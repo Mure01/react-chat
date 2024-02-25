@@ -3,11 +3,13 @@ const router = express.Router()
 const fs = require('fs')
 const upload = require('../config/multer')
 
-const {registerUser, loginUser, getAllUsers } = require('../controllers/userController')
+const {registerUser,addMessage, getMessage, loginUser, getAllUsers } = require('../controllers/userController')
 
 router.post('/register', registerUser)
 router.post('/login', loginUser)
 router.get('/getAllUsers', getAllUsers)
+router.post('/addMessage', addMessage)
+router.get('/getMessage', getMessage)
 
 
 

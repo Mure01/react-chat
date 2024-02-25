@@ -7,27 +7,32 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 export const authContext = createContext();
 function App() {
   const [userLogged, setUserLogged] = useState(localStorage.getItem("User"));
-
+  const [userReciver, setUserReciver] = useState("");
+  const [isUserSelected, setIsUserSelected] = useState(false);
 
   useEffect(() => {
     setUserLogged(localStorage.getItem("User"));
   }, []);
 
   const router = createBrowserRouter([
-    {path: "/",
-    children: [
-      { path: "/", element: userLogged ? <Chat /> : <Login /> },
-      { path: "/login", element: <Login /> },
-      { path: "/register", element: <Register /> },
-    ]
-  }
+    { path: "/", element: userLogged ? <Chat /> : <Login /> },
+    { path: "/login", element: <Login /> },
+    { path: "/register", element: <Register /> },
   ]);
 
   return (
     <>
-    <authContext.Provider value={{setUserLogged}}>
-      <RouterProvider router={router}></RouterProvider>
-    </authContext.Provider>
+      <authContext.Provider
+        value={{
+          setUserLogged,
+          userReciver,
+          setUserReciver,
+          isUserSelected,
+          setIsUserSelected,
+        }}
+      >
+        <RouterProvider router={router}></RouterProvider>
+      </authContext.Provider>
     </>
   );
 }
