@@ -33,10 +33,10 @@ mongoose.connect(process.env.urlDb)
 const server = app.listen(process.env.PORT, () => {
     console.log("Slusa na portu 5000")
 });
-
 const io = new Server(server, {
     cors:{
-      origin:process.env.CLIENT_LINK
+      origin:process.env.CLIENT_LINK,
+      methods:['GET', 'POST']
     }
 })
 
