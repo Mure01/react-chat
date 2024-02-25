@@ -18,7 +18,7 @@ const ChatContainer = () => {
   const addMessage = async (e) => {
     e.preventDefault();
     setMessages((prevMess) => [...prevMess, message]);
-    socket.emit('sendMessage', message)
+    await socket.emit('sendMessage', message)
     setMessage("");
     await axios
       .post(apiLink + "/addMessage", {
@@ -31,9 +31,12 @@ const ChatContainer = () => {
       })
       .catch((err) => console.log("Error in adding the message : ", err));
   };
-  socket.on('getMessage', function (msg) {
-    setMessages(msg)
-  });
+  const getMessage = async () => {
+    await socket.on('getMessage', function (msg) {
+      setMessages(msg)
+      getMessage()
+    });
+  }
   useEffect(() => {
     const getMessage = async () => {
       await axios
@@ -57,7 +60,7 @@ const ChatContainer = () => {
           </p>
         </div>
 
-        <div className="h-[90%]">
+        <div className="h-[90%] overflow-y-scroll pb-10 text-white px-4">
           {messages.length !== 0 ? (
             messages.map((mess) => {
               if (
