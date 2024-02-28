@@ -78,15 +78,27 @@ const ChatContainer = () => {
               ) {
                 if (mess.sender === currentUser._id)
                   return (
-                    <h1 className="w-full text-right" key={mess.createdAt}>
+                <div key={mess.createdAt} className="flex flex-col items-end my-2" >
+                  <div className="bg-sky-800 px-4 py-1 rounded-xl">
+                    <h1 className="w-full text-right" >
                       {mess.message}
                     </h1>
+                    <p className="text-xs font-semibold border-t-2 uppercase mt-1"> {currentUser.username} {new Date(mess.createdAt).getHours() < 10 ? '0'+new Date(mess.createdAt).getHours() : new Date(mess.createdAt).getHours()} 
+                    : {new Date(mess.createdAt).getMinutes() <10 ? '0'+new Date(mess.createdAt).getMinutes() : new Date(mess.createdAt).getMinutes()}</p>
+                    </div>
+                  </div>
                   );
                 else
                   return (
-                    <h1 className="w-full text-left" key={mess.createdAt}>
-                      {mess.message}
-                    </h1>
+                    <div key={mess.createdAt} className="flex flex-col items-start my-2" >
+                    <div className="bg-green-800 px-4 py-1 rounded-xl">
+                      <h1 className="w-full text-right" >
+                        {mess.message}
+                      </h1>
+                      <p className="text-xs font-semibold border-t-2 uppercase mt-1"> {userReciver.username} {new Date(mess.createdAt).getHours() < 10 ? '0'+new Date(mess.createdAt).getHours() : new Date(mess.createdAt).getHours()} 
+                      : {new Date(mess.createdAt).getMinutes() <10 ? '0'+new Date(mess.createdAt).getMinutes() : new Date(mess.createdAt).getMinutes()}</p>
+                      </div>
+                    </div>
                   );
               }
             })
